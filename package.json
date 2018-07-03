@@ -8,6 +8,21 @@
   },
   "author": "",
   "license": "ISC",
+  "nyc": {
+    "reporter": [
+      "text",
+      "lcov"
+    ],
+    "include": [
+      "src/**"
+    ],
+    "all": true,
+    "check-coverage": true,
+    "statements": 25,
+    "branches": 25,
+    "functions": 25,
+    "lines": 25
+  },
   "dependencies": {
     "lodash.pick": "4.4.0",
     "moment": "2.22.2",
