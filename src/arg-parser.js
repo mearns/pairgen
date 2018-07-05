@@ -1,5 +1,6 @@
 const moment = require('moment')
 const timestring = require('timestring')
+const yargs = require('yargs')
 
 function configureArgParser (cmdYargs) {
   return cmdYargs
@@ -44,37 +45,11 @@ const getDateCoercer = (argName) => arg => {
   return m.toDate()
 }
 
-function DummyParser () {
-  this.options = {}
+const PARSER = yargs()
+  .command('* member [members...]', '', configureArgParser)
+
+function parseArgs (argv) {
+  return PARSER.parse(argv)
 }
 
-DummyParser.prototype.positional = function () {
-  return this
-}
-DummyParser.prototype.option = function (name, def) {
-  this.options[name] = def
-  return this
-}
-DummyParser.prototype.applyDefaults = function (args) {
-  const parsed = {}
-  Object.keys(this.options).forEach(opt => {
-    if (args.hasOwnProperty(opt)) {
-      parsed[opt] = args[opt]
-    } else {
-      const optDef = this.options[opt]
-      const coercer = optDef.coerce || (x => x)
-      const defValue = optDef.default
-      parsed[opt] = coercer(defValue)
-    }
-  })
-  return parsed
-}
-
-const DUMMY_PARSER = new DummyParser()
-configureArgParser(DUMMY_PARSER)
-
-function applyDefaults (opts) {
-  return DUMMY_PARSER.applyDefaults(opts)
-}
-
-module.exports = {configureArgParser, applyDefaults}
+module.exports = {configureArgParser, parseArgs}

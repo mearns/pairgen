@@ -1,7 +1,7 @@
 const express = require('express')
 const morgan = require('morgan')
 const {generatePairs} = require('.')
-const {applyDefaults} = require('./arg-parser')
+const {parseArgs} = require('./arg-parser')
 const StatusCodes = require('http-status-codes')
 
 function runServer (host, port) {
@@ -37,8 +37,11 @@ function configureApiRouter (router) {
   router.get('/pairs', (request, response) => {
     try {
       const members = parseMembers(request.query.members)
-      const opts = applyDefaults({})
-      response.json(generatePairs(members, opts))
+      const argv = [
+        ...members
+      ]
+      const args = parseArgs(argv)
+      response.json(generatePairs(args.members, args))
     } catch (e) {
       response.status(StatusCodes.BAD_REQUEST).json({error: e.message})
     }
