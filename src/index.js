@@ -1,5 +1,20 @@
-function getRotation (memberCount, options) {
+const humanizeDuration = require('humanize-duration')
 
+function getHumanDurationDescriptions (timeMs, ...languages) {
+  return languages.reduce((acc, lang) => {
+    acc[lang] = {
+      exact: humanizeDuration(timeMs, {language: lang}),
+      approximate: humanizeDuration(timeMs, {language: lang, largest: 2, round: true})
+    }
+    return acc
+  }, {})
+}
+
+function describeDuration (timeMs) {
+  return {
+    ms: timeMs,
+    text: getHumanDurationDescriptions(timeMs, 'en', 'ar', 'zh_CN', 'fr', 'de', 'gr', 'it', 'ja', 'ko', 'no', 'ru', 'es')
+  }
 }
 
 function generatePairs (members, options) {
@@ -15,12 +30,8 @@ function generatePairs (members, options) {
     return {
       pairs,
       rotation,
-      elapsedTime: {
-        ms: elapsedTime
-      },
-      period: {
-        ms: options.period
-      },
+      elapsedTime: describeDuration(elapsedTime),
+      period: describeDuration(options.period),
       interval: intervalNum,
       date: options.date,
       epoch: options.epoch,
