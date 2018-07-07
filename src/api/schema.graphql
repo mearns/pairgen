@@ -1,0 +1,36 @@
+
+scalar GraphQLLong
+
+type Pair {
+  role1: String!
+  role2: String!
+  tuple: [String!]!
+}
+
+type Duration {
+  ms: GraphQLLong!
+  text(lang: String!, precision: Int = null): String!
+}
+
+type Date {
+  timestamp: Int!
+  timestampMs: GraphQLLong!
+  isoString: String!
+}
+
+type Pairings {
+  pairs: [Pair!]!
+  rotation: Int!
+  interval: Int!
+  offset: Int!
+  epoch: Date!
+  date: Date!
+  period: Duration!
+  elapsedTime: Duration!
+}
+
+type Query {
+  pairings(members: [String!]!): Pairings!
+}
+
+

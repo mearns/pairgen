@@ -1,18 +1,10 @@
 const {generatePairs} = require('..')
 const {parseArgs} = require('../arg-parser')
 const graphqlHTTP = require('express-graphql')
-const graphql = require('graphql')
+const {graphql, buildSchema} = require('graphql')
 const GraphQLLong = require('graphql-type-long')
 const humanizeDuration = require('humanize-duration')
-
-const PairType = new graphql.GraphQLObjectType({
-  name: 'Pair',
-  fields: {
-    role1: { type: graphql.GraphQLString },
-    role2: { type: graphql.GraphQLString },
-    tuple: { type: graphql.GraphQLList(graphql.GraphQLString) }
-  }
-})
+const fs = require('fs')
 
 function Pair (role1, role2) {
   this._role1 = role1
@@ -28,25 +20,6 @@ Pair.prototype.tuple = function () {
   return [this._role1, this._role2]
 }
 
-const DurationType = new graphql.GraphQLObjectType({
-  name: 'Duration',
-  fields: {
-    ms: {
-      type: new graphql.GraphQLNonNull(GraphQLLong)
-    },
-    text: {
-      type: new graphql.GraphQLNonNull(graphql.GraphQLString),
-      args: {
-        lang: { type: new graphql.GraphQLNonNull(graphql.GraphQLString) },
-        precision: {
-          type: graphql.GraphQLInt,
-          description: 'The maximum number of time units to include',
-        }
-      }
-    }
-  }
-})
-
 function Duration (ms) {
   this._ms = ms
 }
@@ -56,21 +29,6 @@ Duration.prototype.ms = function () {
 Duration.prototype.text = function ({lang, precision}) {
   return humanizeDuration(this._ms, {language: lang, largest: precision})
 }
-
-const DateType = new graphql.GraphQLObjectType({
-  name: 'Date',
-  fields: {
-    timestamp: {
-      type: graphql.GraphQLInt
-    },
-    timestampMs: {
-      type: GraphQLLong
-    },
-    isoString: {
-      type: graphql.GraphQLString
-    }
-  }
-})
 
 function GqlDate (datetime) {
   this._date = new Date(datetime)
@@ -84,20 +42,6 @@ GqlDate.prototype.timestampMs = function () {
 GqlDate.prototype.isoString = function () {
   return this._date.toISOString()
 }
-
-const PairingsType = new graphql.GraphQLObjectType({
-  name: 'Pairings',
-  fields: {
-    pairs: { type: graphql.GraphQLList(PairType) },
-    rotation: { type: graphql.GraphQLInt },
-    interval: { type: graphql.GraphQLInt },
-    offset: { type: graphql.GraphQLInt },
-    epoch: { type: DateType },
-    date: { type: DateType },
-    period: { type: DurationType },
-    elapsedTime: { type: DurationType }
-  }
-})
 
 function Pairings (data) {
   this._data = data
@@ -127,31 +71,23 @@ Pairings.prototype.elapsedTime = function () {
   return new Duration(this._data.elapsedTime.ms)
 }
 
-const QueryType = new graphql.GraphQLObjectType({
-  name: 'Query',
-  fields: {
-    pairings: {
-      type: PairingsType,
-      args: {
-        members: { type: graphql.GraphQLList(graphql.GraphQLString) }
-      },
-      resolve: (_, {members}) => {
-        const args = parseArgs(['--', ...members])
-        return new Pairings(generatePairs(args.members, Object.assign(
-          {},
-          args,
-          {verbose: true}
-        )))
-      }
-    }
+const rootValue = {
+  pairings: ({members}) => {
+    const args = parseArgs(['--', ...members])
+    return new Pairings(generatePairs(args.members, Object.assign(
+      {},
+      args,
+      {verbose: true}
+    )))
   }
-})
+}
 
-const schema = new graphql.GraphQLSchema({query: QueryType})
+const schema = buildSchema(fs.readFileSync('./src/api/schema.graphql', 'utf8'))
 
 function configureGraphqlApiRouter (router) {
   router.use(graphqlHTTP({
     schema,
+    rootValue,
     graphiql: true
   }))
 }
