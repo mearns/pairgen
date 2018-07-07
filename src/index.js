@@ -13,7 +13,7 @@ function getHumanDurationDescriptions (timeMs, ...languages) {
 function describeDuration (timeMs) {
   return {
     ms: timeMs,
-    text: getHumanDurationDescriptions(timeMs, 'en', 'ar', 'zh_CN', 'fr', 'de', 'gr', 'it', 'ja', 'ko', 'no', 'ru', 'es')
+    text: getHumanDurationDescriptions(timeMs, 'en')
   }
 }
 
