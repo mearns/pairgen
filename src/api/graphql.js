@@ -32,12 +32,16 @@ const DurationType = new graphql.GraphQLObjectType({
   name: 'Duration',
   fields: {
     ms: {
-      type: GraphQLLong
+      type: new graphql.GraphQLNonNull(GraphQLLong)
     },
     text: {
-      type: graphql.GraphQLString,
+      type: new graphql.GraphQLNonNull(graphql.GraphQLString),
       args: {
-        lang: { type: graphql.GraphQLString }
+        lang: { type: new graphql.GraphQLNonNull(graphql.GraphQLString) },
+        precision: {
+          type: graphql.GraphQLInt,
+          description: 'The maximum number of time units to include',
+        }
       }
     }
   }
@@ -49,8 +53,8 @@ function Duration (ms) {
 Duration.prototype.ms = function () {
   return this._ms
 }
-Duration.prototype.text = function ({lang}) {
-  return humanizeDuration(this._ms, {language: lang})
+Duration.prototype.text = function ({lang, precision}) {
+  return humanizeDuration(this._ms, {language: lang, largest: precision})
 }
 
 const DateType = new graphql.GraphQLObjectType({
