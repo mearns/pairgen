@@ -79,7 +79,8 @@ const rootValue = {
       args,
       {verbose: true}
     )))
-  }
+  },
+  Long: value => new GraphQLLong(value)
 }
 
 const schema = buildSchema(fs.readFileSync('./src/api/schema.graphql', 'utf8'))

@@ -1,5 +1,5 @@
 
-scalar GraphQLLong
+scalar Long
 
 type Pair {
   role1: String!
@@ -8,13 +8,13 @@ type Pair {
 }
 
 type Duration {
-  ms: GraphQLLong!
+  ms: Long!
   text(lang: String!, precision: Int = null): String!
 }
 
 type Date {
   timestamp: Int!
-  timestampMs: GraphQLLong!
+  timestampMs: Long!
   isoString: String!
 }
 
