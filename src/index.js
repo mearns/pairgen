@@ -18,6 +18,9 @@ function describeDuration (timeMs) {
 }
 
 function generatePairs (members, options) {
+  if (members.length < 2) {
+    throw new Error('Cannot generate pairs for fewer than two members')
+  }
   const modulus = members.length - 1
   const elapsedTime = options.date - options.epoch
   const intervalNum = parseInt(options.offset + (elapsedTime / options.period))

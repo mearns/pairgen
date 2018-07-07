@@ -1,36 +1,100 @@
 
+"A long precision (54-bit) signed integer value"
 scalar Long
 
+"A order pair of members"
 type Pair {
+  "The first member in the pair"
   role1: String!
+
+  "The second member in the pair"
   role2: String!
+
+  "A two element array representing the pair in order, like [role1, role2]"
   tuple: [String!]!
 }
 
+"Represents a time duration, with millisecond precision"
 type Duration {
+
+  "The measure of the duration, in milliseconds"
   ms: Long!
-  text(lang: String!, precision: Int = null): String!
+
+  "Represent the duration in a natural language"
+  text(
+    "The language to use (ISO 639-1 format, from languages supported by humanize-duration: https://www.npmjs.com/package/humanize-duration#supported-languages)"
+    lang: String!
+    "The maximum number of units to show (e.g., 'precision: 2' might show weeks and days, but not hours)"
+    precision: Int = null
+  ): String!
 }
 
+"Represents a date and time"
 type Date {
+  "The unix timestamp (seconds since midnight 1970-01-01, UTC)"
   timestamp: Int!
+
+  "The number of milliseconds since the Unix epoch"
   timestampMs: Long!
+
+  "Represents this datetime in simplified extended ISO format (ISO 8601)"
   isoString: String!
 }
 
+"A generated set of pairs from a specified set of members"
 type Pairings {
+  "The generated pairs"
   pairs: [Pair!]!
+
+  """
+  The calculated rotation of the members that assigns the second role to each pair.
+  This is calculated from the number of intervals and the offset.
+  """
   rotation: Int!
+
+  """
+  The number of intervals (periods) that have elapsed between the specified
+  epoch and date.
+  """
   interval: Int!
+
+  """
+  An integer offset that can be used to change the rotation from what would be
+  calculated just from the interval. This is useful, for instance, if you've
+  skipped some intervals.
+  """
   offset: Int!
+
+  """
+  The starting time from which elapsedTime (and therefore interval and rotation)
+  are calculated.
+  """
   epoch: Date!
+
+  """
+  The ending time to which elapsedTime (and therefore interval and rotation)
+  are calculated (relative to the specified epoch)
+  """
   date: Date!
+
+  """
+  The configured period; how often the pair assignments change (i.e., the length
+  of each interval)
+  """
   period: Duration!
+
+  """
+  The elapsed time between the epoch and the specified date.
+  """
   elapsedTime: Duration!
 }
 
 type Query {
-  pairings(members: [String!]!): Pairings!
+  "Generate a set of pairings for the given members"
+  pairings(
+    "A list of the members from which to generate pairs"
+    members: [String!]!
+  ): Pairings!
 }
 
 

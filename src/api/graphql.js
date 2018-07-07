@@ -83,6 +83,7 @@ const rootValue = {
   Long: value => new GraphQLLong(value)
 }
 
+// TK: Use mz, make configure...Router return a promise.
 const schema = buildSchema(fs.readFileSync('./src/api/schema.graphql', 'utf8'))
 
 function configureGraphqlApiRouter (router) {
