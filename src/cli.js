@@ -53,6 +53,7 @@ function getArgParser (scriptName) {
 
   return (argv, handlers) => {
     const args = y.parse(argv)
+    console.log(argv, args)
     const handler = handlers[args._]
     return handler(args)
   }

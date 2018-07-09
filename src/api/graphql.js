@@ -1,10 +1,9 @@
 const {generatePairs} = require('..')
 const {parseArgs} = require('../arg-parser')
 const graphqlHTTP = require('express-graphql')
-const {buildSchema} = require('graphql')
+const schema = require('./schema.graphql')
 const GraphQLLong = require('graphql-type-long')
 const humanizeDuration = require('humanize-duration')
-const fs = require('fs')
 
 function Pair (role1, role2) {
   this._role1 = role1
@@ -95,9 +94,6 @@ const rootValue = {
   },
   Long: value => new GraphQLLong(value)
 }
-
-// XXX: TK: Use mz, make configure...Router return a promise.
-const schema = buildSchema(fs.readFileSync('./src/api/schema.graphql', 'utf8'))
 
 function configureGraphqlApiRouter (router) {
   router.use(graphqlHTTP({
