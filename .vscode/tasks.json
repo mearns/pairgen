@@ -1,0 +1,33 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "command": "npm",
+        "label": "compile",
+        "args": [
+          "run",
+          "--silent",
+          "compile"
+        ],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        }
+      },
+      {
+        "command": "npm",
+        "label": "unit test",
+        "args": [
+          "run",
+          "--silent",
+          "test"
+        ],
+        "group": {
+          "kind": "test",
+          "isDefault": true
+        }
+      }
+    ]
+  }
