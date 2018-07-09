@@ -94,6 +94,18 @@ type Query {
   pairings(
     "A list of the members from which to generate pairs"
     members: [String!]!
+
+    "The period for each pairing assignment"
+    period: String = null
+
+    "The date of the epoch"
+    epoch: String = null
+
+    "The date for which to get the pairings"
+    date: String = null
+
+    "An offset for the rotation"
+    offset: Int = null
   ): Pairings!
 }
 

@@ -1,7 +1,7 @@
 const {generatePairs} = require('..')
 const {parseArgs} = require('../arg-parser')
 const graphqlHTTP = require('express-graphql')
-const {graphql, buildSchema} = require('graphql')
+const {buildSchema} = require('graphql')
 const GraphQLLong = require('graphql-type-long')
 const humanizeDuration = require('humanize-duration')
 const fs = require('fs')
@@ -72,8 +72,21 @@ Pairings.prototype.elapsedTime = function () {
 }
 
 const rootValue = {
-  pairings: ({members}) => {
-    const args = parseArgs(['--', ...members])
+  pairings: ({members, period, offset, epoch, date}) => {
+    const optArgs = []
+    if (period !== null) {
+      optArgs.push('--period', period)
+    }
+    if (offset !== null) {
+      optArgs.push('--offset', String(offset))
+    }
+    if (epoch !== null) {
+      optArgs.push('--epoch', epoch)
+    }
+    if (date !== null) {
+      optArgs.push('--date', date)
+    }
+    const args = parseArgs([...optArgs, '--', ...members])
     return new Pairings(generatePairs(args.members, Object.assign(
       {},
       args,
@@ -83,7 +96,7 @@ const rootValue = {
   Long: value => new GraphQLLong(value)
 }
 
-// TK: Use mz, make configure...Router return a promise.
+// XXX: TK: Use mz, make configure...Router return a promise.
 const schema = buildSchema(fs.readFileSync('./src/api/schema.graphql', 'utf8'))
 
 function configureGraphqlApiRouter (router) {
