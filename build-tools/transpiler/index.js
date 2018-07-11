@@ -1,21 +1,13 @@
 const OUTPUT_DIR = 'dest'
 
 const LOADERS = [
-  {
-    name: 'graphql schema loader',
-    applies: filename => Boolean(filename.match(/\.graphql$/)),
-    transpile: content => `const {buildSchema} = require('graphql'); module.exports = buildSchema(${encodeJSStringLiteral(content)})`
-  },
+  require('./loaders/graphql'),
   {
     name: 'JSON loader',
     applies: filename => Boolean(filename.match(/\.json\.js$/)),
     transpile: content => `module.exports = ${content}`
   }
 ]
-
-function encodeJSStringLiteral (content) {
-  return `\`${content.replace(/\\/g, '\\\\').replace(/`/g, '\\`')}\``
-}
 
 const path = require('path')
 const walk = require('fs-walk')
@@ -61,22 +53,23 @@ function main (rootDirs) {
 function transpileFile (baseDir, filename) {
   const srcPath = path.join(baseDir, filename)
   const loader = getLoader(baseDir, filename)
+  const destPath = getDestPath(baseDir, filename)
   if (loader) {
     return fs.readFile(srcPath, 'utf-8')
-      .then(loader.transpile)
-      .then(output => fs.writeFile(getDestFile(baseDir, filename), output))
+      .then(content => loader.transpile(content, {sourcePath: `../../../${srcPath}`, destPath}))
+      .then(output => fs.writeFile(destPath, output))
       .then(() => {
         console.log(`${srcPath}: [${loader.name}]`)
       })
   } else {
-    return copyFile(srcPath, getDestFile(baseDir, filename))
+    return copyFile(srcPath, getDestPath(baseDir, filename))
       .then(() => {
         console.log(`${srcPath}: (copied)`)
       })
   }
 }
 
-function getDestFile (baseDir, filename) {
+function getDestPath (baseDir, filename) {
   return path.join(OUTPUT_DIR, baseDir, filename)
 }
 
