@@ -3,6 +3,7 @@ const {runServer} = require('./server')
 const {configureArgParser} = require('./arg-parser')
 const packageData = require('../package.json')
 const yargs = require('yargs')
+const humanizeDuration = require('humanize-duration')
 
 function main (argv, scriptName) {
   getArgParser(scriptName || packageData.name)(argv, {
@@ -12,6 +13,16 @@ function main (argv, scriptName) {
 }
 
 function cliHandler (args) {
+  if (args.prologue) {
+    const prologue = args.prologue
+      .replace('%d{x}', args.date.toLocaleDateString())
+      .replace('%d{X}', args.date.toLocaleTimeString())
+      .replace('%d{c}', args.date.toLocaleString())
+      .replace('%p', humanizeDuration(args.period))
+      .replace('%m', args.members.join(', '))
+    console.log(prologue)
+    console.log()
+  }
   return generatePairs(args.members, args)
     .forEach(pair => {
       const str = args['format-string'].replace('%1', pair[0]).replace('%2', pair[1])

@@ -41,6 +41,14 @@ function configureArgParser (cmdYargs) {
       default: '%1 -- %2',
       description: 'The format string to use for each pair. Use "%1" and "%2" to represent the first and second item in each pair, respecitively.'
     })
+    .option('prologue', {
+      alias: ['P', 'header'],
+      string: true,
+      description: 'Specify a string to be printed before the listing of pairs. ' +
+        'Use "%p" for the period in humanized form, "%m" for the members in a comma-separated list, ' +
+        'and various forms of %d for the date: %d{x} for the locale date string, %d{X} for the locale ' +
+        'time string, and %d{c} for the locale datetime string'
+    })
 }
 
 const getDateCoercer = (argName) => arg => {
