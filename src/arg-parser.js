@@ -35,6 +35,12 @@ function configureArgParser (cmdYargs) {
       default: 0,
       description: 'Specify an arbitary offset for the rotation. This is useful if you have skipped some intervals.'
     })
+    .option('format-string', {
+      alias: 'f',
+      string: true,
+      default: '%1 -- %2',
+      description: 'The format string to use for each pair. Use "%1" and "%2" to represent the first and second item in each pair, respecitively.'
+    })
 }
 
 const getDateCoercer = (argName) => arg => {

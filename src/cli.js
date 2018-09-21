@@ -14,7 +14,8 @@ function main (argv, scriptName) {
 function cliHandler (args) {
   return generatePairs(args.members, args)
     .forEach(pair => {
-      console.log(`${pair[0]} -- ${pair[1]}`)
+      const str = args['format-string'].replace('%1', pair[0]).replace('%2', pair[1])
+      console.log(str)
     })
 }
 
