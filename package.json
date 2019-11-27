@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "dest/src/main.js",
+  "bin": "dest/src/main.js",
   "scripts": {
     "test": "nyc mocha ./dest/test/src/**/*.spec.js",
     "compile": "node build-tools/transpiler src test package.json",
